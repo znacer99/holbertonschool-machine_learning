@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+module to calculate size of a matrix
+"""
+
 def matrix_shape(matrix):
     """
     Matrix shape function : this function calculates the length
@@ -12,11 +16,11 @@ def matrix_shape(matrix):
 
         element = matrix[0]
         if isinstance(element, list):
-            matrix_shape_2(element, size)
-        return size
+            size.extend(matrix_shape_2(element, size))
+    return size
 
 
-def matrix_shape_2(matrix):
+def matrix_shape_2(matrix, size):
     """
     Matrix_shape_2 is the matrix shape function that works recursively
     with the first matrix shape function and it's the same function but
@@ -28,5 +32,5 @@ def matrix_shape_2(matrix):
 
         element = matrix[0]
         if isinstance(element, list):
-            matrix_shape_2(element, size)
-        return size
+            size.extend(matrix_shape_2(element, size))
+    return size
