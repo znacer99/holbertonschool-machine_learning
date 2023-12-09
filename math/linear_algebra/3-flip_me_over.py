@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import numpy as np
 """
 module that returns the transpose of a 2D matrix
 """
@@ -9,4 +8,10 @@ def matrix_transpose(matrix):
     """
     Returns the transpose of a matrix
     """
-    return np.transpose(matrix).tolist()
+    transpose = []
+    for j in range(len(matrix[0])):
+        x = []
+        for i in range(len(matrix)):
+            transpose.append(matrix[i][j])
+        transpose.append(x)
+    return transpose
