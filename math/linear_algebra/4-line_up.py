@@ -9,8 +9,11 @@ def add_arrays(arr1, arr2):
     calculates sum of 2 arrays
     """
     result = []
+    if not arr1 and not arr2:
+        return result
+    if len(arr1) != len(arr2):
+        return result
     for i in range (len(arr1)):
-        for j in range (len(arr2)):
-            x = arr1[i] + arr2[j]
-            result.append(x)
+        x = arr1[i] + arr2[i]
+        result.append(x)
     return result
