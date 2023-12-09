@@ -12,7 +12,7 @@ def add_arrays(arr1, arr2):
     if not arr1 and not arr2:
         return result
     if len(arr1) != len(arr2):
-        return result
+        return "Arrays are not the same size"
     for i in range (len(arr1)):
         x = arr1[i] + arr2[i]
         result.append(x)
