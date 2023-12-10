@@ -2,6 +2,7 @@
 """
 Module
 """
+import numpy ad np
 
 
 def np_matmul(mat1, mat2):
