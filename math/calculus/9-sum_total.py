@@ -2,12 +2,15 @@
 """
 module
 """
+import sys
 
 
 def summation_i_squared(n):
     """
     function
     """
+    sys.setrecursionlimit(10**6)
+
     if not isinstance(n, int) or n < 1:
         return None
 
