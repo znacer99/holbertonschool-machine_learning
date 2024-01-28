@@ -3,7 +3,7 @@
 Module used to
 """
 
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 
 def dropout_create_layer(prev, n, activation, keep_prob):
