@@ -47,3 +47,36 @@ class Neuron:
         self.__w = np.random.randn(1, nx)
         self.__b = 0
         self.__A = 0
+
+    @property
+    def W(self):
+        """
+        getter method
+        args:
+            - self
+        return:
+        - __W: the value of the proate attribute __W.
+        """
+        return self.__W
+
+    @property
+    def A(self):
+        """
+        getter method
+        Args:
+            - self
+        Return:
+        - __A: The value of the proate attribute __A.
+        """
+        return self.__A
+
+    @property
+    def b(self):
+        """
+        getter method
+        Args:
+            - self
+        Return:
+        - __b: The value of the proate attribute __b.
+        """
+        return self.__b
