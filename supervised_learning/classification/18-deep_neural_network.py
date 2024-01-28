@@ -132,26 +132,3 @@ class DeepNeuralNetwork:
             self.__cache["A" + str(layer + 1)] = forward_prop
 
         return self.__cache["A" + str(self.__L)], self.__cache
-
-    def cost(self, Y, A):
-        """
-        Calculates the cost of the model using logistic regression
-        Arguments:
-        - Y is a numpy.ndarray with shape (1, m) that contains the correct
-            labels for the input data
-        - A is a numpy.ndarray with shape (1, m) containing the activated
-        output of the neuron for each example
-        Return:
-        - cost: the cost
-        Answer from: https://bit.ly/37x9YzM
-        """
-        m = Y.shape[1]
-        j = - (1 / m)
-
-        Â = 1.0000001 - A
-        Ŷ = 1 - Y
-        log_A = np.log(A)
-        log_Â = np.log(Â)
-
-        cost = j * np.sum(np.multiply(Y, log_A) + np.multiply(Ŷ, log_Â))
-        return cost
