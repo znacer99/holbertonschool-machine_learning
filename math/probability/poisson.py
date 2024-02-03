@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import numpy as np
 
 class Poisson:
     def __init__(self, data=None, lambtha=1.):
