@@ -21,6 +21,12 @@ class Exponential:
         if x < 0:
             return 0
         else:
-            import math
-            pdf_value = self.lambtha * math.exp(-self.lambtha * x)
+            pdf_value = self.lambtha * 2.7182818285 ** (-self.lambtha * x)
             return pdf_value
+
+    def cdf(self, x):
+        if x < 0:
+            return 0
+        else:
+            cdf_value = 1 - np.exp(-self.lambtha * x)
+            return cdf_value

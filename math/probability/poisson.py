@@ -22,8 +22,7 @@ class Poisson:
         if k < 0:
             return 0
         else:
-            import math
-            pmf_value = (self.lambtha ** k) * (math.exp(-self.lambtha)) / math.factorial(k)
+            pmf_value = (self.lambtha ** k) * (2.7182818285 ** (-self.lambtha)) / math.factorial(k)
             return pmf_value
 
     def cdf(self, k):
@@ -32,6 +31,5 @@ class Poisson:
         if k < 0:
             return 0
         else:
-            import math
-            cdf_value = sum([(self.lambtha ** i) * (math.exp(-self.lambtha)) / math.factorial(i) for i in range(k + 1)])
+            cdf_value = sum([(self.lambtha ** i) * (2.7182818285 ** (-self.lambtha)) / math.factorial(i) for i in range(k + 1)])
             return cdf_value
