@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import numpy as np
-from scipy.special import erf
 
 class Normal:
     def __init__(self, data=None, mean=0., stddev=1.):
