@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-builds a dense block
+dense block
 """
 
 import tensorflow.keras as K
 
 
 def dense_block(X, nb_filters, growth_rate, layers):
-    """ doc """
+    """
+    builds a dense block as described in Densely Connected Convolutional Networks
+    """
 
     for i in range(layers):
         x = K.layers.BatchNormalization()(X)

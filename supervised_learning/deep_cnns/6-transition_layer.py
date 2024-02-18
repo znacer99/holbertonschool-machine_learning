@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-builds a dense block
+dense block
 """
 
 import tensorflow.keras as K
 
 
 def transition_layer(X, nb_filters, compression):
-    """ doc """
+    """
+    builds a transition layer as described in Densely Connected Convolutional
+    Networks.
+    """
     x = K.layers.BatchNormalization()(X)
     x = K.layers.Activation('relu')(x)
     n = int(nb_filters * compression)

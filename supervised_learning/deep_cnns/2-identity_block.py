@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 """
-builds an identity block
+identity block
 """
 
 import tensorflow.keras as K
 
 
 def identity_block(A_prev, filters):
-    """ doc """
+    """
+    builds an identity block as described in deep residual learning
+    for image recognition (2015).
+    """
 
     initialize = K.initializers.he_normal(seed=None)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-builds an inception network
+inception network.
 """
 
 import tensorflow.keras as K
@@ -8,7 +8,10 @@ inception_block = __import__('0-inception_block').inception_block
 
 
 def inception_network():
-    """ doc """
+    """
+    builds an inception network as described in Going deeper with
+    convolutions (2014).
+    """
     inputs = K.Input(shape=(224, 224, 3))
     initialize = K.initializers.he_normal(seed=None)
 

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-builds a projection block
+projection block
 """
 import tensorflow.keras as K
 
 
 def projection_block(A_prev, filters, s=2):
-    """ doc """
+    """
+    builds a projection block as described in Deep residual learning
+    for image Recognition (2015).
+    """
 
     initialize = K.initializers.he_normal(seed=None)
 

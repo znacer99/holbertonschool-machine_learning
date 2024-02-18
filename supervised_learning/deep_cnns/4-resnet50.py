@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-builds the ResNet-50 architecture
+the ResNet-50 architecture
 """
 import tensorflow.keras as K
 
@@ -9,7 +9,10 @@ projection_block = __import__('3-projection_block').projection_block
 
 
 def resnet50():
-    """ doc """
+    """
+    builds the ResNet-50 architecture as described in Deep Residual
+    learning for Image Recognition (2015).
+    """
 
     initialize = K.initializers.he_normal(seed=None)
     inputs = K.Input(shape=(224, 224, 3))
