@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
-"""
-Creates a bag of words embedding matrix
-"""
+""" Bag of Words Embedding """
 from sklearn.feature_extraction.text import CountVectorizer
 
 
 def bag_of_words(sentences, vocab=None):
     """
     Creates a bag of words embedding matrix
-    sentences: a list of sentences to analyze
-    vocab: a list of the vocabulary words to use for the analysis
+    sentences: list of sentences to analyze
+    vocab: list of the vocabulary words
+    Returns embeddings, features
+        embeddings: A numpy.ndarray of shape(s, f) containing the embeddings
+            s: Number of sentences in sentences list
+            f: Number of features analyzed
+        features: A list of the features used for embeddings
     """
-    vector = CountVectorizer(vocabulary=vocab)
-    X = vector.fit_transform(sentences)
-    features = vector.get_feature_names()
-    embeddings = X.toarray()
+    vectorizer = CountVectorizer(vocabulary=vocab)
+
+    embeddings = vectorizer.fit_transform(sentences).toarray()
+    features = vectorizer.get_feature_names_out().tolist()
 
     return embeddings, features
