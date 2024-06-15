@@ -4,6 +4,7 @@
 Creates a class for Poisson
 """
 
+
 class Poisson:
     """
     Poisson class for distribution
