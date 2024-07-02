@@ -10,12 +10,17 @@ class Exponential:
     """
 
     def __init__(self, data=None, lambtha=1.):
-        self.lambtha = float(lambtha)
-        if self.lambtha <= 0:
-            raise ValyeError("lambtha must be a positive value")
         if data is None:
+            if lambtha < 1:
+                raise ValueError("lambtha must be a positive value")
+            else:
+                self.lambtha = float(lambtha)
+
+        else:
             if type(data) is not list:
                 raise TypeError("data must be a list")
-            if len(data) < 2:
+            elif len(data) < 2:
                 raise ValueError("data must contain multiple values")
-            self.lambtha = float(sum(data)) / len(data)
+            else:
+                lambtha = float(len(data)) / sum(data)
+                self.lambtha = lambtha
