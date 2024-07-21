@@ -3,6 +3,7 @@
 Defines Normal class that represents normal distribution
 """
 
+
 class Normal:
     """
     Class that represents normal distribution
