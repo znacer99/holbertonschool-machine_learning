@@ -4,6 +4,7 @@
 Creates a class for exponential.
 """
 
+
 class Exponential:
     """
     Class for exponential distribution
