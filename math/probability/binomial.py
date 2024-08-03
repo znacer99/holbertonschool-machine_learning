@@ -60,3 +60,13 @@ class Binomial:
         choose = n / (x * n_x)
         p = (self.p**k) * ((1-self.p)**(self.n-k))
         return choose * p
+
+    def cdf(self, k):
+        """
+        Calculates the value of the CDF for a given number of successes
+        """
+        if type(k) is not int:
+            k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+        return sum([self.pmf(i) for i in range(k + 1)])
