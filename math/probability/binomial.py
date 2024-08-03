@@ -35,3 +35,28 @@ class Binomial:
                 p = float(mean / n)
                 self.n = n
                 self.p = p
+
+    def factorial(self, lst):
+        """
+        finds factorial
+        """
+        fact, facts = 1, []
+        for k in lst:
+            for x in range(1, k + 1):
+                fact = fact * x
+            facts.append(int(fact))
+            fact = 1
+        return tuple(facts)
+
+    def pmf(self, k):
+        """
+        Calculates the value of the PMF for a given number of "successes"
+        """
+        if type(k) is not int:
+            k = int(k)
+        if k < 0 or k > self.n:
+            return 0
+        n, x, n_x = self.factorial([self.n, k, self.n-k])
+        choose = n / (x * n_x)
+        p = (self.p**k) * ((1-self.p)**(self.n-k))
+        return choose * p
