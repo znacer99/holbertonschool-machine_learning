@@ -22,7 +22,6 @@ class Neuron:
         _A: the activated output of the neuron (prediction)
     """
 
-
     def __init__(self, nx):
         """
         class constructor
