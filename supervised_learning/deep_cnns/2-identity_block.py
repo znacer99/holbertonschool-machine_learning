@@ -1,36 +1,67 @@
 #!/usr/bin/env python3
 """
-identity block
+Identity Block
 """
 
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def identity_block(A_prev, filters):
     """
-    builds an identity block as described in deep residual learning
-    for image recognition (2015).
+    Builds an identity block as described in
+    'Deep Residual Learning for Image Recognition' (2015).
+
+    Parameters:
+    A_prev : tensor
+        The output of the previous layer.
+    filters : tuple or list
+        Contains F11, F3, F12 respectively:
+            F11 : int
+                Number of filters in the first 1x1 convolution.
+            F3 : int
+                Number of filters in the 3x3 convolution.
+            F12 : int
+                Number of filters in the second 1x1 convolution.
+
+    Returns:
+    tensor
+        The activated output of the identity block.
     """
+    F11, F3, F12 = filters
 
-    initialize = K.initializers.he_normal(seed=None)
+    # Initializer he_normal with seed 0
+    init = K.initializers.HeNormal(seed=0)
 
-    layer1 = K.layers.Conv2D(filters[0], kernel_size=(1, 1),
-                             padding='same',
-                             kernel_initializer=initialize)(A_prev)
-    batch = K.layers.BatchNormalization(axis=3)(layer1)
-    activation = K.layers.Activation('relu')(batch)
+    # First layer of left branch
+    conv1 = K.layers.Conv2D(filters=F11,
+                            kernel_size=(1, 1),
+                            strides=(1, 1),
+                            padding="same",
+                            kernel_initializer=init)(A_prev)
 
-    layer2 = K.layers.Conv2D(filters[1], kernel_size=(3, 3),
-                             padding='same',
-                             kernel_initializer=initialize)(activation)
-    batch = K.layers.BatchNormalization(axis=3)(layer2)
-    activation = K.layers.Activation('relu')(batch)
+    norm1 = K.layers.BatchNormalization(axis=-1)(conv1)
+    relu1 = K.layers.Activation(activation="relu")(norm1)
+    # NOTE could also use layers.ReLU() directly instead
 
-    layer3 = K.layers.Conv2D(filters[2], kernel_size=(1, 1),
-                             padding='same',
-                             kernel_initializer=initialize)(activation)
-    batch = K.layers.BatchNormalization(axis=3)(layer3)
+    # Second layer of left branch
+    conv2 = K.layers.Conv2D(filters=F3,
+                            kernel_size=(3, 3),
+                            strides=(1, 1),
+                            padding="same",
+                            kernel_initializer=init)(relu1)
+    norm2 = K.layers.BatchNormalization(axis=-1)(conv2)
+    relu2 = K.layers.Activation(activation="relu")(norm2)
 
-    allTogueter = K.layers.Add()([batch, A_prev])
+    # Final layer of left branch
+    conv3 = K.layers.Conv2D(filters=F12,
+                            kernel_size=(1, 1),
+                            strides=(1, 1),
+                            padding="same",
+                            kernel_initializer=init)(relu2)
+    norm3 = K.layers.BatchNormalization(axis=-1)(conv3)
 
-    return K.layers.Activation('relu')(allTogueter)
+    # Merge output of left branch and right branch (input A_prev)
+    merged = K.layers.Add()([norm3, A_prev])
+
+    # Return activated output of merge, using ReLU
+    return K.layers.Activation(activation="relu")(merged)
