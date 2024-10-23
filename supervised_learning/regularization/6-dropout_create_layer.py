@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
 """
-Module used to
+Create a Layer with Dropout
 """
+import tensorflow as tf
 
-import tensorflow.compat.v1 as tf
 
-
-def dropout_create_layer(prev, n, activation, keep_prob):
+def dropout_create_layer(prev, n, activation, keep_prob, training=True):
     """
-    creates a layer of a neural network using dropout
-    Args:
-        - prev is a tensor containing the output of the previous layer
-        - n is the number of nodes the new layer should contain
-        - activation is the activation funct that should be used on the layer
-        - keep_prob is the probability that a node will be kept
-    Returns:
-        the output of the new layer
+    Creates a dense layer with dropout.
+
+    Parameters:
+    - prev: tensor containing the output of the previous layer
+    - n: number of nodes the new layer should contain
+    - activation: activation function for the new layer
+    - keep_prob: probability that a node will be kept
+    - training: boolean indicating whether the model is in training mode
+
+    Returns: the output of the new layer
     """
+    # Weight initialization: He et al.
+    init_weights = tf.keras.initializers.VarianceScaling(
+        scale=2.0, mode="fan_avg")
 
-    # tf.contrib.layers.l2_regularizer
-    # Returns a funct that can be used to apply L2 regularization to weights.
+    layer = tf.keras.layers.Dense(
+        units=n,
+        activation=activation,
+        kernel_initializer=init_weights
+    )
 
-    raw_layer = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
-    dropout_layer = tf.layers.Dropout(keep_prob)
+    # Apply the dense layer
+    output = layer(prev)
 
-    output_tensor = tf.layers.Dense(units=n,
-                                    activation=activation,
-                                    kernel_regularizer=dropout_layer,
-                                    kernel_initializer=raw_layer)
+    # Apply dropout on output only during training
+    if training:
+        dropout = tf.keras.layers.Dropout(rate=(1 - keep_prob))
+        output = dropout(output, training=training)
 
-    applied_layer = output_tensor(prev)
-    return(applied_layer)
+    return output
