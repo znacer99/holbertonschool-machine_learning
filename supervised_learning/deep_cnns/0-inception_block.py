@@ -1,74 +1,63 @@
 #!/usr/bin/env python3
 """
-Inception block
+Inception Block
 """
 
-import tensorflow.keras as K
+from tensorflow import keras as K
 
 
 def inception_block(A_prev, filters):
-    """Builds an inception block as described in Going Deeper with
-    Convolutions (2014).
+    """
+    Builds an inception block as described in the study
+    'Going Deeper with Convolutions' (2014).
 
-    Args:
-        A_prev (Keras input): the output from the previous layer.
-        filters (tuple or list): [F1, F3R, F3, F5R, F5, FPP], where:
-                                  F1 is the number of filters in the 1x1
-                                  convolution.
-                                  F3R is the number of filters in the 1x1
-                                  convolution before the 3x3 convolution.
-                                  F3 is the number of filters in the 3x3
-                                  convolution.
-                                  F5R is the number of filters in the 1x1
-                                  convolution before the 5x5 convolution.
-                                  F5 is the number of filters in the 5x5
-                                  convolution.
-                                  FPP is the number of filters in the 1x1
-                                  convolution after the max pooling.
+    Parameters:
+    A_prev:
+        output from the previous layer, with shape
+        (batch_size, height, width, channels).
+    filters:
+        tuple or list containing the number of filters for each
+    convolution in the inception block:
+        F1: number of filters in the 1x1 convolution
+        F3R: number of filters in the 1x1 convolution before 3x3 convolution
+        F3: number of filters in the 3x3 convolution
+        F5R: number of filters in the 1x1 convolution before 5x5 convolution
+        F5: number of filters in the 5x5 convolution
+        FPP: number of filters in the 1x1 convolution after the max pooling
+        after the max pooling.
 
     Returns:
-        The concatenated output of the inception block
+        Concatenated output of the inception block, with shape
+        (batch_size, height, width, total_filters),
+        where total_filters is the sum of F1, F3, F5, and FPP.
     """
-    O1 = K.layers.Conv2D(filters=filters[0],
-                         kernel_size=1,
-                         padding='same',
-                         kernel_initializer='he_normal',
-                         activation='relu')(A_prev)
+    F1, F3R, F3, F5R, F5, FPP = filters
 
-    O3R = K.layers.Conv2D(filters=filters[1],
-                          kernel_size=1,
-                          padding='same',
-                          kernel_initializer='he_normal',
-                          activation='relu')(A_prev)
+    # Branch 1: 1x1 convolution branch
+    conv1x1 = K.layers.Conv2D(F1, kernel_size=(1, 1), padding='same',
+                              activation='relu')(A_prev)
 
-    OFPPR = K.layers.MaxPooling2D(pool_size=(3, 3),
-                                  padding='same',
-                                  strides=(1, 1))(A_prev)
+    # Branch 2: 1x1 convolution before 3x3 convolution
+    conv3x3_reduce = K.layers.Conv2D(F3R, kernel_size=(1, 1), padding='same',
+                                     activation='relu')(A_prev)
+    conv3x3 = K.layers.Conv2D(F3, kernel_size=(3, 3), padding='same',
+                              activation='relu')(conv3x3_reduce)
 
-    O3 = K.layers.Conv2D(filters=filters[2],
-                         kernel_size=3,
-                         padding='same',
-                         kernel_initializer='he_normal',
-                         activation='relu')(O3R)
+    # Branch 3: 1x1 convolution before 5x5 convolution
+    conv5x5_reduce = K.layers.Conv2D(F5R, kernel_size=(1, 1), padding='same',
+                                     activation='relu')(A_prev)
+    conv5x5 = K.layers.Conv2D(F5, kernel_size=(5, 5), padding='same',
+                              activation='relu')(conv5x5_reduce)
 
-    O5R = K.layers.Conv2D(filters=filters[3],
-                          kernel_size=1,
-                          padding='same',
-                          kernel_initializer='he_normal',
-                          activation='relu')(A_prev)
+    # Branch 4: 3x3 max pooling before 1x1 convolution
+    maxpool = K.layers.MaxPool2D(pool_size=(3, 3), strides=(1, 1),
+                                 padding='same')(A_prev)
+    maxpool_conv = K.layers.Conv2D(FPP, kernel_size=(1, 1), padding='same',
+                                   activation='relu')(maxpool)
 
-    O5 = K.layers.Conv2D(filters=filters[4],
-                         kernel_size=5,
-                         padding='same',
-                         kernel_initializer='he_normal',
-                         activation='relu')(O5R)
+    # Concatenate the branches outputs along the channels dimension
+    output = K.layers.Concatenate(
+        axis=-1)([conv1x1, conv3x3, conv5x5, maxpool_conv])
+    # NOTE axis=-1 is equivalent to axis=3 here (hits last index dimension)
 
-    OFPP = K.layers.Conv2D(filters=filters[5],
-                           kernel_size=1,
-                           padding='same',
-                           kernel_initializer='he_normal',
-                           activation='relu')(OFPPR)
-
-    concatenate_filters = K.layers.Concatenate(axis=3)([O1, O3, O5, OFPP])
-
-    return concatenate_filters
+    return output
