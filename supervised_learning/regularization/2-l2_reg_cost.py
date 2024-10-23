@@ -5,6 +5,7 @@ calculates the cost of a neural network with L2 regularization
 
 
 import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 
 
 def l2_reg_cost(cost, lam):
