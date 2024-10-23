@@ -22,7 +22,7 @@ def create_layer(prev, n, activation):
         the tensor output of the layer
     """
 
-    raw_layer = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
+    initializer = tf.contrib.layers.variance_scaling_initializer(mode="FAN_AVG")
 
     # (1)
     # init = tf.global_variables_initializer()
