@@ -1,54 +1,81 @@
 #!/usr/bin/env python3
 """
-inception network.
+Inception Network
 """
 
-import tensorflow.keras as K
+from tensorflow import keras as K
 inception_block = __import__('0-inception_block').inception_block
 
 
 def inception_network():
     """
-    builds an inception network as described in Going deeper with
-    convolutions (2014).
+    Builds the inception network as described in
+    'Going Deeper with Convolutions' (2014).
+
+    This function constructs an Inception network with the following
+    specifications:
+    - Input shape: (224, 224, 3)
+    - All convolutions (including the inception block) use ReLU activation.
+    - Uses the inception_block function for constructing inception modules.
+
+    Returns:
+    tf.keras.Model
+        The Keras model of the inception network.
     """
-    inputs = K.Input(shape=(224, 224, 3))
-    initialize = K.initializers.he_normal(seed=None)
 
-    x = K.layers.Conv2D(64, kernel_size=(7, 7), padding='same',
-                        strides=(2, 2), kernel_initializer=initialize,
-                        activation='relu')(inputs)
+    # input tensor (assuming given shape)
+    input_data = K.Input(shape=(224, 224, 3))
 
-    x = K.layers.MaxPool2D((3, 3), (2, 2), padding='same')(x)
+    conv1 = K.layers.Conv2D(filters=64,
+                            kernel_size=(7, 7),
+                            strides=(2, 2),
+                            padding="same",
+                            activation="relu")(input_data)
 
-    x = K.layers.Conv2D(64, kernel_size=(1, 1), padding='same',
-                        kernel_initializer=initialize,
-                        activation='relu')(x)
+    maxpool_1 = K.layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2),
+                                   padding="same")(conv1)
 
-    x = K.layers.Conv2D(192, kernel_size=(3, 3), padding='same',
-                        kernel_initializer=initialize,
-                        activation='relu')(x)
+    # 2-depth conv. like inception block: reduce dims then convolve again
+    conv2 = K.layers.Conv2D(filters=64,
+                            kernel_size=(1, 1),
+                            strides=(1, 1),
+                            padding="same",
+                            activation="relu")(maxpool_1)
+    conv3 = K.layers.Conv2D(filters=192,
+                            kernel_size=(3, 3),
+                            strides=(1, 1),
+                            padding="same",
+                            activation="relu")(conv2)
 
-    x = K.layers.MaxPool2D((3, 3), (2, 2), padding='same')(x)
+    maxpool_2 = K.layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2),
+                                   padding="same")(conv3)
 
-    x = inception_block(x, [64, 96, 128, 16, 32, 32])
-    x = inception_block(x, [128, 128, 192, 32, 96, 64])
+    # 2 inception blocks
+    inception_3a = inception_block(maxpool_2, [64, 96, 128, 16, 32, 32])
+    inception_3b = inception_block(inception_3a, [128, 128, 192, 32, 96, 64])
 
-    x = K.layers.MaxPool2D((3, 3), (2, 2), padding='same')(x)
+    maxpool_3 = K.layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2),
+                                   padding="same")(inception_3b)
 
-    x = inception_block(x, [192, 96, 208, 16, 48, 64])
-    x = inception_block(x, [160, 112, 224, 24, 64, 64])
-    x = inception_block(x, [128, 128, 256, 24, 64, 64])
-    x = inception_block(x, [112, 144, 288, 32, 64, 64])
-    x = inception_block(x, [256, 160, 320, 32, 128, 128])
+    # 5 inception blocks in a row
+    inception_4a = inception_block(maxpool_3, [192, 96, 208, 16, 48, 64])
+    inception_4b = inception_block(inception_4a, [160, 112, 224, 24, 64, 64])
+    inception_4c = inception_block(inception_4b, [128, 128, 256, 24, 64, 64])
+    inception_4d = inception_block(inception_4c, [112, 144, 288, 32, 64, 64])
+    inception_4e = inception_block(inception_4d, [256, 160, 320, 32, 128, 128])
 
-    x = K.layers.MaxPool2D((3, 3), (2, 2), padding='same')(x)
+    maxpool_4 = K.layers.MaxPool2D(pool_size=(3, 3), strides=(2, 2),
+                                   padding="same")(inception_4e)
 
-    x = inception_block(x, [256, 160, 320, 32, 128, 128])
-    x = inception_block(x, [384, 192, 384, 48, 128, 128])
+    # 2 inception blocks in a row
+    inception_5a = inception_block(maxpool_4, [256, 160, 320, 32, 128, 128])
+    inception_5b = inception_block(inception_5a, [384, 192, 384, 48, 128, 128])
 
-    x = K.layers.AvgPool2D((7, 7), padding='same')(x)
-    x = K.layers.Dropout(0.4)(x)
-    x = K.layers.Dense(1000, activation='softmax')(x)
+    avg_pool = K.layers.AvgPool2D(pool_size=(7, 7),
+                                  strides=(1, 1))(inception_5b)
 
-    return (K.Model(inputs, x))
+    dropout = K.layers.Dropout(rate=0.4)(avg_pool)
+
+    outputs = K.layers.Dense(units=1000, activation="softmax")(dropout)
+
+    return K.Model(inputs=input_data, outputs=outputs)
