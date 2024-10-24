@@ -22,3 +22,6 @@ python recognize.py
 python recognize-image.py
 ```
 
+## Authors
+
+- [@znacer999](https://github.com/znacer99)
